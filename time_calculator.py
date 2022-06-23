@@ -1,8 +1,8 @@
 def add_time(start, duration, day=False):
   '''
   '''
+  print(start, duration, day)
 
-  adddays = 0
   shours, smins = start.split(':')
   durhours, durmins = duration.split(':')
   smins, meridiem = smins.split(' ')
@@ -13,15 +13,10 @@ def add_time(start, duration, day=False):
   dmins = int(durmins)
   mrdm = meridiem.lower().strip()
 
-  summins = mins + dmins
-  sumhrs = hrs + dhrs
-
-  #convert total minutes into hrs
-  if summins >= 60:
-    sumhrs = sumhrs + int(summins / 60)
-    summins = int(summins % 60)
-
-  #if there is a time delta
+  sumhrs = hrs + dhrs + int((mins + dmins) / 60)
+  summins = int((mins + dmins) % 60)
+  #if there is a time delta ensure that days get calculated 
+  adddays = 0
   if dhrs or dmins:
     if mrdm == 'pm' and sumhrs > 12:
       if sumhrs % 24 >= 1.0:
@@ -33,6 +28,7 @@ def add_time(start, duration, day=False):
 
     thrs = sumhrs
 
+    # decrease total hours, flipping between am/pm until find last meridiem
     while True:
       if thrs < 12:
         break
@@ -47,7 +43,7 @@ def add_time(start, duration, day=False):
   endmins = int(summins % 60)
 
   results = f'{endhrs}:{endmins:02} {mrdm.upper()}'
-  print(results)
+  
   
   daysofweek = [
     'monday',
@@ -65,7 +61,7 @@ def add_time(start, duration, day=False):
     results += f', {current_day.title()} {dayslater(adddays)}'
   else: # add days later
     results = " ".join((results, dayslater(adddays)))
-
+  # print(results.strip())
   return results.strip()
   
   
