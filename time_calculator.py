@@ -1,8 +1,12 @@
 def add_time(start, duration, day=False):
   '''
+  Code seems to be working properly although I am 
+  having some trouble with the printing for self 
+  confirmation with the unittest feature where periods 
+  are added before every printout
   '''
-  print(start, duration, day)
 
+  adddays = 0
   shours, smins = start.split(':')
   durhours, durmins = duration.split(':')
   smins, meridiem = smins.split(' ')
@@ -13,10 +17,15 @@ def add_time(start, duration, day=False):
   dmins = int(durmins)
   mrdm = meridiem.lower().strip()
 
-  sumhrs = hrs + dhrs + int((mins + dmins) / 60)
-  summins = int((mins + dmins) % 60)
-  #if there is a time delta ensure that days get calculated 
-  adddays = 0
+  summins = mins + dmins
+  sumhrs = hrs + dhrs
+
+  #convert total minutes into hrs
+  if summins >= 60:
+    sumhrs = sumhrs + int(summins / 60)
+    summins = int(summins % 60)
+
+  #if there is a time delta
   if dhrs or dmins:
     if mrdm == 'pm' and sumhrs > 12:
       if sumhrs % 24 >= 1.0:
@@ -28,7 +37,6 @@ def add_time(start, duration, day=False):
 
     thrs = sumhrs
 
-    # decrease total hours, flipping between am/pm until find last meridiem
     while True:
       if thrs < 12:
         break
@@ -46,22 +54,21 @@ def add_time(start, duration, day=False):
   
   
   daysofweek = [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday']
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday']
 
   if day:
-    day = day.strip().lower()
+    day = day.strip().title()
     selected_day = int((daysofweek.index(day) + adddays) % 7)
     current_day = daysofweek[selected_day]
-    results += f', {current_day.title()} {dayslater(adddays)}'
+    results += f', {current_day} {dayslater(adddays)}'
   else: # add days later
     results = " ".join((results, dayslater(adddays)))
-  # print(results.strip())
   return results.strip()
   
   
@@ -74,4 +81,4 @@ def dayslater(ndays):
     return '(next day)'
   elif ndays > 1:
     return '({} days later)'.format(ndays)
-  return''
+  return ''
